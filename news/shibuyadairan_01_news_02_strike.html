@@ -174,6 +174,40 @@ td{font-weight:500}
 .gal-external svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .gal-account:focus-visible,.gal-external:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .gal-photo-bar a:hover{text-decoration:underline}
+.results-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:stretch}
+.result-photo-column{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+.result-hero{margin:0;overflow:hidden;border:2px solid var(--accent);border-radius:5px;background:var(--surface)}
+.result-hero img{display:block;width:100%;height:auto}
+.result-photo-info{display:flex;flex:1 1 0px;min-height:0;flex-direction:column;gap:4px;padding:4px 8px;border:1px solid var(--line);border-radius:5px;background:var(--surface)}
+.result-photo-meta{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:clamp(17px,1.45vw,19px)}
+.result-photo-meta dt{color:var(--accent-strong);font-family:var(--f-label);font-size:14px;letter-spacing:.1em}
+.result-photo-meta dd{margin:0;font-weight:700}
+.result-event-link{display:flex;align-items:center;justify-content:center;align-self:center;width:min(100%,320px);min-height:46px;margin-top:auto;margin-bottom:auto;padding:6px 10px;border:1px solid var(--pri-bd);border-radius:4px;color:var(--pri-ink);background:linear-gradient(var(--pri-top) 0%,var(--pri-btm) 100%);font-size:14px;font-weight:700;line-height:1.3;text-align:center;text-decoration:none;overflow-wrap:anywhere}
+.result-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:0;padding:0;list-style:none}
+.result-item{display:flex;align-items:baseline;gap:7px;min-width:0;padding:6px 8px;border:1px solid var(--line);border-radius:3px;background:var(--surface-2);line-height:1.35}
+.result-place{flex:none;color:var(--accent-strong);font-family:var(--f-num);font-size:.72em;font-weight:700}
+.result-name{min-width:0;overflow-wrap:anywhere;font-weight:700}
+.result-crown{width:2em;height:2em;flex:none;margin-left:auto;fill:currentColor}
+.result-item--first,.result-item--second,.result-item--third,.result-item--fourth{grid-column:1/-1;align-items:center}
+.result-item--first{padding:12px;background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.result-item--first .result-place{color:var(--on-accent)}
+.result-item--first .result-name{font-size:clamp(1.45rem,3vw,2rem);font-weight:900}
+.result-item--second{padding:9px 10px}
+.result-item--second .result-name{font-size:1.3rem}
+.result-item--third{padding:8px 10px}
+.result-item--third .result-name{font-size:1.12rem}
+.result-item--fourth{padding:7px 9px}
+.result-item--fourth .result-name{font-size:1rem}
+.result-item--top-eight .result-name{font-size:.92rem}
+.result-item--field .result-name{font-size:.76rem;font-weight:500}
+@media (max-width:719px){
+  .results-layout{grid-template-columns:1fr;gap:14px;align-items:start}
+  .result-photo-column{width:min(100%,360px);margin:0 auto}
+  .result-photo-info{flex:initial;height:190px;min-height:190px;gap:8px;padding:10px}
+  .result-photo-meta{font-size:18px}
+  .result-photo-meta dt{font-size:14px}
+  .result-event-link{width:min(100%,320px);font-size:16px}
+}
 /* PC・タブレット：7枚を横一列（帯は STARTER 5列分／COUNTER 2列分） */
 @media (min-width:720px){
   .stages{grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
@@ -295,6 +329,26 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
     <p>施設内には複数の建物があります。到着後は、上記の大会会場・受付までお越しください。</p>
     <p class="note warn">駅からの徒歩時間に加え、敷地内の移動時間も見込んで、受付に間に合うよう余裕を持ってお越しください。</p>
   </section>
+  <section class="blk" id="results" aria-labelledby="h-results">
+    <div class="blk-h"><h2 id="h-results">大会リザルト</h2></div>
+    <div class="results-layout">
+      <div class="result-photo-column">
+        <figure class="result-hero">
+          <img id="resultPhoto" alt="" decoding="async">
+        </figure>
+        <div class="result-photo-info">
+          <dl class="result-photo-meta">
+            <dt>DATE</dt><dd id="resultDate"></dd>
+            <dt>ATTENDEES</dt><dd id="resultScale"></dd>
+          </dl>
+          <a class="result-event-link pri" id="resultEventLink" target="_blank" rel="noopener">Supermajorのページはこちら</a>
+        </div>
+      </div>
+      <div class="result-standings">
+        <ol class="result-list" id="standingsList" aria-label="大会順位"></ol>
+      </div>
+    </div>
+  </section>
   <section class="blk" id="gal" aria-labelledby="h-gal">
     <div class="blk-h"><h2 id="h-gal">フォトギャラリー</h2></div>
     <div class="gal" id="galleryList"></div>
@@ -325,6 +379,26 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
     mapUrl: 'https://www.google.com/maps?q=%E5%9B%BD%E7%AB%8B%E3%82%AA%E3%83%AA%E3%83%B3%E3%83%94%E3%83%83%E3%82%AF%E8%A8%98%E5%BF%B5%E9%9D%92%E5%B9%B4%E7%B7%8F%E5%90%88%E3%82%BB%E3%83%B3%E3%82%BF%E3%83%BC&output=embed',
   };
 
+  // リザルト写真・順位一覧はここを編集
+  var resultPhoto = '../image/results/second-strike-champion.jpg';
+  var resultDetails = {
+    date: '2026年10月18日（日）',
+    scale: '294人',
+    eventUrl: 'https://www.supermajor.gg/ultimate/event/S1704865'
+  };
+  var standingsGroups = [
+    { rank: 1, names: ['すまほ'] },
+    { rank: 2, names: ['れの/Reno'] },
+    { rank: 3, names: ['マイルドなH.O/Mild na H.O'] },
+    { rank: 4, names: ['mayor'] },
+    { rank: 5, names: ['らき', 'KEN'] },
+    { rank: 7, names: ['とみさ/Tomisa', 'アヴァる'] },
+    { rank: 9, names: ['Shuton', 'LemozonA', 'リム', 'JY'] },
+    { rank: 13, names: ['黒船', 'めたら/Metara', '雨飴/uame', 'こう'] },
+    { rank: 17, names: ['ふたりのきわみアー!', 'MiiBrawlerGod', 'アカキクス', 'Yaura', 'ゴリオカ', 'ヴァン', 'このくるる', 'Shirayuki'] },
+    { rank: 25, names: ['みどるん', 'カヲル', 'ボール#OKPG', 'いしポン', 'Noi', 'ゆり', 'アポロ11号', 'Gachipit'] }
+  ];
+
   // ギャラリーに表示する一覧
   var galleryItems = [
     // ギャラリーの表示内容はここを編集
@@ -348,6 +422,41 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
   document.getElementById('evTag').dataset.date = eventInfo.date;
   var eventDate = document.getElementById('eventDate');
   eventDate.dateTime = eventInfo.date;
+
+  var resultPhotoElement = document.getElementById('resultPhoto');
+  resultPhotoElement.src = resultPhoto;
+  resultPhotoElement.alt = '渋谷大乱 第二陣 優勝者 すまほ選手';
+  document.getElementById('resultDate').textContent = resultDetails.date;
+  document.getElementById('resultScale').textContent = resultDetails.scale;
+  var resultEventLink = document.getElementById('resultEventLink');
+  resultEventLink.href = resultDetails.eventUrl;
+  var standingsList = document.getElementById('standingsList');
+  standingsGroups.forEach(function(group){
+    group.names.forEach(function(name){
+      var item = document.createElement('li');
+      var tier = group.rank === 1 ? 'first' : group.rank === 2 ? 'second' : group.rank === 3 ? 'third' : group.rank === 4 ? 'fourth' : group.rank <= 8 ? 'top-eight' : 'field';
+      item.className = 'result-item result-item--' + tier;
+      var place = document.createElement('span');
+      place.className = 'result-place';
+      place.textContent = group.rank + '位';
+      var playerName = document.createElement('span');
+      playerName.className = 'result-name';
+      playerName.textContent = name;
+      item.appendChild(place);
+      item.appendChild(playerName);
+      if(group.rank === 1){
+        var crown = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        crown.setAttribute('class', 'result-crown');
+        crown.setAttribute('viewBox', '0 0 24 24');
+        crown.setAttribute('aria-hidden', 'true');
+        var crownShape = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        crownShape.setAttribute('d', 'M5 19h14l1.5-10-5 3-3.5-6-3.5 6-5-3L5 19zm1.7-2-.8-5.2 3.3 2 2.8-4.8 2.8 4.8 3.3-2-.8 5.2H6.7z');
+        crown.appendChild(crownShape);
+        item.appendChild(crown);
+      }
+      standingsList.appendChild(item);
+    });
+  });
 
   var galleryList = document.getElementById('galleryList');
   if(galleryItems.length === 0) document.getElementById('gal').hidden = true;
