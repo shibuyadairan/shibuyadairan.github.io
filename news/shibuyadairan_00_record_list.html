@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>過去の記録一覧｜渋谷大乱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Inter+Tight:wght@500;600;700&family=Space+Grotesk:wght@400;500&family=DotGothic16&display=swap" rel="stylesheet">
+<script src="../function.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --accent:#6744ff;--accent-strong:#5a3ae6;--accent-tint:#ebe6ff;--on-accent:#fff;
+  --bg:#eee;--surface:#fff;--ink:#1e1e1e;--muted:#6b6b6b;--foot-bg:var(--accent);--foot-ink:#fff;
+  --line:#dadada;--surface-2:#f6f6f7;--link:var(--accent-strong);--done:#8a8a8a;
+  --btn-bd:#b2b2b2;--btn-top:#fff;--btn-btm:#e9e9ec;--btn-ink:#333;
+  --f-label:"Space Grotesk","Noto Sans JP",system-ui,sans-serif;--f-dot:"DotGothic16","Noto Sans JP",system-ui,sans-serif;
+  --font-body:"Noto Sans JP",system-ui,sans-serif;--font-num:"Inter Tight","Noto Sans JP",system-ui,sans-serif;
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --accent:#00ffc3;--accent-strong:#00ffc3;--accent-tint:#0b2a22;--on-accent:#0b0b0b;
+  --bg:#0c0c0c;--surface:#151515;--ink:#e6e6e6;--muted:#9a9a9a;--foot-bg:#050505;--foot-ink:var(--accent);
+  --line:#2a2a2a;--surface-2:#1b1b1b;--done:#7a7a7a;
+  --btn-bd:#3d3d3d;--btn-top:#262626;--btn-btm:#1a1a1a;--btn-ink:#e6e6e6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 var(--font-body);overflow-x:hidden;font-feature-settings:"palt" 1}
+a{color:inherit}
+.bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar-in{display:flex;align-items:center;justify-content:space-between;gap:10px;height:56px;max-width:860px;margin:0 auto;padding:0 16px}
+.home{display:flex;align-items:center;gap:9px;text-decoration:none}
+.home .mark{width:34px;height:34px;border-radius:7px;background:#000 url("data:image/webp;base64,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") center/cover no-repeat;border:1px solid rgba(255,255,255,.08);flex:none}
+.home b{font-family:var(--f-dot);font-weight:400;font-size:20px;color:var(--accent);letter-spacing:.06em}
+.theme-btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:99px;border:1.5px solid var(--accent);background:transparent;color:var(--accent-strong);font:500 11px/1 var(--f-label);letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.tb-icon{width:14px;height:14px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 0 50%,transparent 50%)}
+@media (max-width:359px){.tb-txt{display:none}.theme-btn{padding:0 10px}}
+.wrap{max-width:860px;margin:0 auto;padding:26px 16px 48px}
+.crumb{font-size:12.5px;margin:0 0 14px;transform:translateY(10px)}
+.crumb a{color:var(--link);text-decoration:none;font-weight:500}
+.crumb a::before{content:"";display:inline-block;width:6px;height:6px;border-left:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:0 7px 1px 2px}
+.label{font:500 11px/1.4 "Space Grotesk",var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+h1{margin:6px 0 20px;font-size:clamp(24px,6vw,32px);font-weight:900;line-height:1.35}
+h1::after{content:"";display:block;width:100%;height:4px;margin-top:14px;background:var(--accent)}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{border-top:1px solid var(--line)}
+.rows li:first-child{border-top:0}
+.rows a{display:grid;grid-template-columns:40px 1fr 10px;gap:12px;align-items:center;padding:11px 4px 11px 0;text-decoration:none}
+.ico{width:40px;height:40px;border-radius:4px;background:var(--accent-tint);display:grid;place-items:center;font-size:18px;filter:grayscale(1) contrast(1.1)}
+.ico.rec{font-family:var(--font-num);font-weight:700;font-size:15px;color:var(--accent-strong);filter:none}
+.rows b{display:block;font-size:14px;line-height:1.4;color:var(--link)}
+.rows small{display:block;font-size:12px;color:var(--muted);line-height:1.5}
+.rows a::after{content:"";width:7px;height:7px;border-top:1.5px solid var(--muted);border-right:1.5px solid var(--muted);transform:rotate(45deg)}
+.nw{white-space:nowrap}
+.rows a:hover b{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.back{display:flex;justify-content:center;margin:22px 0 10px}
+.back a{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border-radius:4px;font-weight:700;font-size:14px;text-decoration:none;border:1px solid var(--btn-bd);color:var(--btn-ink);background:linear-gradient(var(--btn-top) 0%,var(--btn-btm) 100%)}
+.foot{background:var(--foot-bg);color:var(--foot-ink);padding:24px 16px 30px;text-align:center;font-family:var(--font-body);font-size:12px;margin-top:24px}
+.foot p{margin:4px 0;opacity:.85}
+.foot p:last-child{font-family:var(--f-label);letter-spacing:.1em;font-size:11px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="bar-in">
+    <a class="home" href="../index.html" aria-label="渋谷大乱 ホームへ"><span class="mark" aria-hidden="true"></span><b>渋谷大乱</b></a>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="ライト／ダークを切り替える"><span class="tb-icon" aria-hidden="true"></span><span class="tb-txt"></span></button>
+  </div>
+</header>
+<main class="wrap">
+  <p class="crumb"><a href="../index.html#record">戻る</a></p>
+  <span class="label">Records</span>
+  <h1>過去の記録一覧</h1>
+  <ul class="rows" id="recordList"></ul>
+  <div class="back"><a href="../index.html#record">戻る</a></div>
+</main>
+<footer class="foot">
+  <p>この大会は、任天堂の協賛・提携を受けたものではありません。</p>
+  <p>© 2026 渋谷大乱</p>
+</footer>
+<script>
+(function(){
+  var root=document.documentElement,btn=document.getElementById('themeBtn');
+  function current(){var theme=root.getAttribute('data-theme');if(theme)return theme;return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+  function paint(){var theme=current();btn.querySelector('.tb-txt').textContent=theme==='dark'?'Light':'Dark';btn.setAttribute('aria-pressed',theme==='dark'?'true':'false');}
+  btn.addEventListener('click',function(){var theme=current()==='dark'?'light':'dark';root.setAttribute('data-theme',theme);try{localStorage.setItem('theme',theme);}catch(e){}paint();});
+  try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',paint);}catch(e){}
+  paint();
+  
+  // --------------------------------------------編集エリア--------------------------------------------
+  // 過去の記録一覧に表示する内容（日付はYYYY-MM-DD形式）
+  var records = [
+    {
+      number: '01',
+      date: '2026-08-22',
+      url: 'shibuyadairan_01_news_01_strike.html',
+      title: '渋谷大乱 第一陣/SHIBUYA DAIRAN',
+      subtitle: '-First Strike-'
+    }
+  ];
+  // --------------------------------------------編集エリア--------------------------------------------
+
+  var weekdays=['日','月','火','水','木','金','土'];
+  var recordList=document.getElementById('recordList');
+  records.forEach(function(record){
+    var item=document.createElement('li');
+    var link=document.createElement('a');
+    link.href=record.url;
+    var number=document.createElement('span');
+    number.className='ico rec';
+    number.setAttribute('aria-hidden','true');
+    number.textContent=record.number;
+    var details=document.createElement('span');
+    var title=document.createElement('b');
+    title.appendChild(document.createTextNode(record.title+' '));
+    var subtitle=document.createElement('span');
+    subtitle.className='nw';
+    subtitle.textContent=record.subtitle;
+    title.appendChild(subtitle);
+    var date=document.createElement('small');
+    var parts=record.date.split('-');
+    var day=new Date(Date.UTC(+parts[0],+parts[1]-1,+parts[2]));
+    date.textContent=parts.join('/')+'('+weekdays[day.getUTCDay()]+') 開催';
+    details.appendChild(title);
+    details.appendChild(date);
+    link.appendChild(number);
+    link.appendChild(details);
+    item.appendChild(link);
+    recordList.appendChild(item);
+  });
+})();
+</script>
+</body>
+</html>

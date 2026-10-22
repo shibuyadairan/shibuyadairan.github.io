@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>渋谷大乱 スマホプレビュー</title>
+<style>
+:root{--bg:#d9d9de;--panel:#ffffff;--ink:#1e1e1e;--muted:#6b6b6b;--line:#c9c9cf;--on:#6744ff;--on-ink:#fff}
+@media (prefers-color-scheme: dark){:root{--bg:#0e0e10;--panel:#1a1a1d;--ink:#e6e6e6;--muted:#9a9a9a;--line:#333;--on:#00ffc3;--on-ink:#0b0b0b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:14px 10px 24px}
+.bar{max-width:560px;display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;align-items:center;margin:0 0 14px;font-size:12px}
+.grp{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.grp button{border:0;background:transparent;color:var(--ink);font:inherit;font-weight:600;padding:7px 11px;cursor:pointer;min-height:32px}
+.grp button+button{border-left:1px solid var(--line)}
+.grp button[aria-pressed="true"]{background:var(--on);color:var(--on-ink)}
+.page-select{min-height:32px;max-width:180px;border:1px solid var(--line);border-radius:8px;padding:0 26px 0 10px;background:var(--panel);color:var(--ink);font:inherit;font-weight:600}
+.lbl{color:var(--muted)}
+.phone{position:relative;background:#111;border-radius:46px;padding:12px;box-shadow:0 0 0 2px #2a2a2a,0 18px 50px rgba(0,0,0,.35);flex:none}
+.phone::before{content:"";position:absolute;top:21px;left:50%;transform:translateX(-50%);width:92px;height:24px;background:#000;border-radius:14px;z-index:2;pointer-events:none}
+.inner{border-radius:34px;overflow:hidden;background:#000}
+.status{height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 26px 0 30px;color:#fff;font:600 13px/1 system-ui,-apple-system,sans-serif}
+.status i{font-style:normal;letter-spacing:1px;font-size:11px}
+.screen{display:block;border:0;background:#fff}
+.size{margin-top:10px;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.fit{transform-origin:top center}
+</style>
+</head>
+<body>
+<div class="bar">
+  <span class="lbl">機種</span>
+  <div class="grp" id="dev">
+    <button data-w="320" data-h="568">SE(初代)</button>
+    <button data-w="375" data-h="667">SE</button>
+    <button data-w="390" data-h="844" aria-pressed="true">標準</button>
+    <button data-w="430" data-h="932">大型</button>
+  </div>
+  <span class="lbl">画面</span>
+  <select class="page-select" id="page-select" aria-label="プレビュー画面">
+    <option value="index.html">ホーム</option>
+    <option value="information/shibuyadairan_rule.html">大会ルール</option>
+    <option value="news/shibuyadairan_00_news_list.html">お知らせ一覧</option>
+    <option value="news/shibuyadairan_00_record_list.html">過去の記録一覧</option>
+    <option value="news/shibuyadairan_01_news_01_strike.html">第一陣</option>
+    <option value="news/shibuyadairan_01_news_02_strike.html">第二陣</option>
+  </select>
+  <span class="lbl">表示</span>
+  <div class="grp" id="thm">
+    <button data-t="light" aria-pressed="true">ライト</button>
+    <button data-t="dark">ダーク</button>
+  </div>
+</div>
+<div class="fit" id="fit"><div class="phone"><div class="inner"><div class="status" aria-hidden="true"><span>9:41</span><i>●●● ▮</i></div><iframe class="screen" id="scr" title="スマホ表示プレビュー"></iframe></div></div></div>
+<div class="size" id="size"></div>
+
+<script>
+(function(){
+  var pages=['index.html','information/shibuyadairan_rule.html','news/shibuyadairan_00_news_list.html','news/shibuyadairan_00_record_list.html','news/shibuyadairan_01_news_01_strike.html','news/shibuyadairan_01_news_02_strike.html'];
+  var scr=document.getElementById('scr'),fit=document.getElementById('fit'),size=document.getElementById('size'),pageSelect=document.getElementById('page-select');
+  var st={w:390,h:844,t:'light',page:pageSelect.value};
+  function syncControls(){
+    try{
+      var currentUrl=new URL(scr.contentWindow.location.href);
+      var rootPath=new URL('.',location.href).pathname;
+      var currentPath=currentUrl.pathname;
+      if(currentPath.indexOf(rootPath)===0) currentPath=currentPath.slice(rootPath.length);
+      if(pages.indexOf(currentPath)>=0){st.page=currentPath;pageSelect.value=currentPath;}
+      var theme=scr.contentDocument.documentElement.getAttribute('data-theme');
+      if(theme==='light'||theme==='dark'){
+        st.t=theme;
+        document.querySelectorAll('#thm button').forEach(function(button){button.setAttribute('aria-pressed',button.dataset.t===theme?'true':'false');});
+      }
+    }catch(e){}
+  }
+  function render(){
+    scr.style.width=st.w+'px'; scr.style.height=st.h+'px';
+    scr.onload=syncControls;
+    var sourceUrl=new URL(st.page,location.href);
+    sourceUrl.searchParams.set('theme',st.t);
+    sourceUrl.searchParams.set('_preview',Date.now());
+    scr.removeAttribute('srcdoc');
+    scr.src=sourceUrl.href;
+    size.textContent=pageSelect.options[pageSelect.selectedIndex].text+' / '+st.w+' × '+st.h+' px（'+(st.t==='light'?'ライト':'ダーク')+'）';
+    scale();
+  }
+  function scale(){
+    // 画面が狭い／低いときは枠ごと縮小して全体が見えるようにする
+    var fw=st.w+24, fh=st.h+24+36, aw=window.innerWidth-20, ah=window.innerHeight-90;
+    var k=Math.min(1,aw/fw,ah/fh); if(k<0.55)k=Math.min(1,aw/fw);
+    fit.style.transform='scale('+k+')'; fit.style.height=(fh*k)+'px'; fit.style.width=fw+'px';
+  }
+  function bind(id,fn){ document.querySelectorAll('#'+id+' button').forEach(function(b){ b.addEventListener('click',function(){
+    document.querySelectorAll('#'+id+' button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')}); fn(b); render(); }); }); }
+  bind('dev',function(b){ st.w=+b.dataset.w; st.h=+b.dataset.h; });
+  bind('thm',function(b){ st.t=b.dataset.t; });
+  pageSelect.addEventListener('change',function(){st.page=pageSelect.value;render();});
+  window.addEventListener('resize',scale);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)render();});
+  render();
+})();
+</script>
+</body>
+</html>
