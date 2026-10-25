@@ -146,14 +146,28 @@ section.blk{background:var(--surface);border:1px solid var(--card-line);border-r
 .card .body{padding:10px 12px 12px}
 .card h3{font-size:14.5px;margin:0 0 2px;font-weight:700;line-height:1.45}
 .card p{margin:0;font-size:12px;color:var(--muted);font-family:var(--f-num)}
-.card.booth{flex-basis:100%;border:0;border-radius:0;background:transparent;overflow:visible}
+.booth-carousel{position:relative}
+.booth-carousel [hidden]{display:none}
+.booth-stage{position:relative;min-height:300px;overflow:hidden;perspective:1000px;transition:height .25s ease}
+.card.booth{position:absolute;top:0;left:50%;width:min(80%,550px);border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);overflow:hidden;opacity:0;visibility:hidden;transform:translateX(-50%) scale(.78);transition:transform .35s ease,opacity .35s ease;will-change:transform}
+.card.booth.is-active{z-index:3;opacity:1;visibility:visible;transform:translateX(-50%);border:2px solid var(--accent);border-radius:8px;box-shadow:0 0 0 3px var(--accent-tint),0 8px 24px rgba(0,0,0,.16)}
+.card.booth.is-prev,.card.booth.is-next{z-index:2;opacity:.62;visibility:visible}
+.card.booth.is-prev{transform:translateX(-136%) rotateY(13deg) scale(.78)}
+.card.booth.is-next{transform:translateX(36%) rotateY(-13deg) scale(.78)}
+.card.booth.is-truncated::after{content:"…";position:absolute;right:0;bottom:0;left:0;display:flex;align-items:flex-end;justify-content:flex-end;height:34px;padding:0 10px 3px;background:linear-gradient(transparent,var(--surface) 60%);color:var(--muted);font-size:20px;line-height:1;pointer-events:none}
 .booth blockquote.twitter-tweet{width:100%!important;max-width:100%!important;min-width:0!important;margin:0!important}
+.booth .twitter-tweet-rendered{margin:0!important}
 .booth .twitter-tweet-rendered iframe{max-width:100%!important}
-#booths{overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:auto;scrollbar-color:var(--muted) var(--surface-2);-webkit-overflow-scrolling:touch}
-#booths::-webkit-scrollbar{display:block;height:12px}
-#booths::-webkit-scrollbar-track{background:var(--surface-2);border-radius:6px}
-#booths::-webkit-scrollbar-thumb{background:var(--muted);border:3px solid var(--surface-2);border-radius:6px}
-@media (max-width:719px){#booths{padding-left:4px;padding-right:4px}}
+.booth-arrow{position:absolute;z-index:4;top:var(--booth-arrow-top,150px);display:grid;place-items:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:rgba(92,98,110,.78);color:#fff;font-size:28px;line-height:1;cursor:pointer;transform:translateY(-50%)}
+.booth-arrow:hover{background:var(--accent-strong)}
+.booth-arrow:focus-visible,.booth-dot:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.booth-arrow-prev{left:0}
+.booth-arrow-next{right:0}
+.booth-pagination{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px}
+.booth-dot{width:12px;height:12px;padding:0;border:0;border-radius:50%;background:var(--muted);opacity:.35;cursor:pointer}
+.booth-dot[aria-current="true"]{width:18px;height:18px;background:var(--accent-strong);opacity:1}
+.booth-count{margin:12px 0 0;text-align:center;color:var(--muted);font-family:var(--f-num);font-size:16px;letter-spacing:.08em}
+@media (prefers-reduced-motion:reduce){.booth-stage,.card.booth{transition:none}}
 .c1{--img:radial-gradient(60% 70% at 30% 60%,#6a6a6a,transparent 70%),linear-gradient(135deg,#3a3a3a,#141414)}
 .c2{--img:radial-gradient(60% 70% at 70% 55%,#7a7a7a,transparent 70%),linear-gradient(135deg,#2e2e2e,#101010)}
 .c3{--img:radial-gradient(60% 70% at 50% 60%,#5a5a5a,transparent 70%),linear-gradient(135deg,#262626,#0e0e0e)}
@@ -274,8 +288,11 @@ section.blk{background:var(--surface);border:1px solid var(--card-line);border-r
 .cat span{white-space:nowrap}
 @media (min-width:720px){
   .card{flex:0 0 calc((100% - 20px)/3)}
-  .card.booth{flex-basis:31%}
   .hscroll{margin:0;padding:0 0 4px}
+  .booth-stage{min-height:340px}
+  .card.booth{width:min(76%,550px)}
+  .booth-arrow-prev{left:2%}
+  .booth-arrow-next{right:2%}
   .gal{grid-template-columns:repeat(2,minmax(0,1fr))}
   .next{padding:28px 32px}
   .next h2{font-size:38px}
@@ -560,7 +577,13 @@ html{scroll-behavior:smooth}
   <!-- 出展ブース・サブイベント -->
   <section class="blk" aria-labelledby="h-booth">
     <div class="blk-h"><h2 id="h-booth">出展ブース・サブイベント</h2></div>
-    <div class="hscroll" id="booths"></div>
+    <div class="booth-carousel" id="boothCarousel">
+      <div class="booth-stage" id="booths" aria-live="polite"></div>
+      <button class="booth-arrow booth-arrow-prev" id="boothPrev" type="button" aria-label="前の出展ブース">‹</button>
+      <button class="booth-arrow booth-arrow-next" id="boothNext" type="button" aria-label="次の出展ブース">›</button>
+      <div class="booth-pagination" id="boothPagination" role="group" aria-label="出展ブースを選択"></div>
+      <p class="booth-count" id="boothCount" aria-live="polite"></p>
+    </div>
   </section>
 
   <!-- ギャラリー -->
@@ -732,9 +755,19 @@ html{scroll-behavior:smooth}
   document.getElementById('next-startggUrl').href = nextTournament.startggUrl;
 
   var boothList = document.getElementById('booths');
-  boothPosts.forEach(function(url){
+  var boothCarousel = document.getElementById('boothCarousel');
+  var boothPagination = document.getElementById('boothPagination');
+  var boothCount = document.getElementById('boothCount');
+  var boothPrev = document.getElementById('boothPrev');
+  var boothNext = document.getElementById('boothNext');
+  var boothCards = [];
+  var boothIndex = 0;
+  var boothAreaHeight = 0;
+
+  boothPosts.forEach(function(url, index){
     var card = document.createElement('div');
     card.className = 'card booth';
+    card.setAttribute('aria-hidden', 'true');
     var tweet = document.createElement('blockquote');
     tweet.className = 'twitter-tweet';
     var link = document.createElement('a');
@@ -743,7 +776,83 @@ html{scroll-behavior:smooth}
     tweet.appendChild(link);
     card.appendChild(tweet);
     boothList.appendChild(card);
+    boothCards.push(card);
+
+    var dot = document.createElement('button');
+    dot.className = 'booth-dot';
+    dot.type = 'button';
+    dot.setAttribute('aria-label', (index + 1) + '件目の出展ブースを表示');
+    dot.setAttribute('aria-current', 'false');
+    dot.addEventListener('click', function(){ showBooth(index); });
+    boothPagination.appendChild(dot);
   });
+
+  function syncBoothHeight(){
+    if(boothCards.length){
+      var referenceCard = boothCards[1];
+      var referenceFrame = referenceCard && referenceCard.querySelector('iframe');
+      if(!boothAreaHeight && referenceFrame && referenceFrame.offsetHeight > 100){
+        boothAreaHeight = referenceCard.offsetHeight;
+      }
+      if(!boothAreaHeight) return;
+
+      boothCards.forEach(function(card, cardIndex){
+        card.style.height = boothAreaHeight + 'px';
+        card.style.maxHeight = boothAreaHeight + 'px';
+        card.classList.toggle('is-truncated', card.scrollHeight > card.clientHeight);
+      });
+      boothList.style.height = boothAreaHeight + 'px';
+    }
+  }
+
+  function syncBoothArrowPosition(){
+    if(boothCards.length){
+      var carouselControlsHeight = boothCarousel.offsetHeight - boothList.offsetHeight;
+      var initialCardCenter = boothCards[0].offsetHeight / 2;
+      boothCarousel.style.setProperty('--booth-arrow-top', (initialCardCenter + carouselControlsHeight / 2) + 'px');
+    }
+  }
+
+  function showBooth(index){
+    if(!boothCards.length) return;
+    boothIndex = (index + boothCards.length) % boothCards.length;
+    boothCards.forEach(function(card, cardIndex){
+      var offset = (cardIndex - boothIndex + boothCards.length) % boothCards.length;
+      card.classList.toggle('is-active', offset === 0);
+      card.classList.toggle('is-next', offset === 1);
+      card.classList.toggle('is-prev', offset === boothCards.length - 1);
+      card.setAttribute('aria-hidden', offset === 0 ? 'false' : 'true');
+      boothPagination.children[cardIndex].setAttribute('aria-current', offset === 0 ? 'true' : 'false');
+    });
+    boothCount.textContent = (boothIndex + 1) + ' / ' + boothCards.length;
+    requestAnimationFrame(syncBoothHeight);
+  }
+
+  boothPrev.addEventListener('click', function(){ showBooth(boothIndex - 1); });
+  boothNext.addEventListener('click', function(){ showBooth(boothIndex + 1); });
+  if(boothCards.length < 2){
+    boothPrev.hidden = true;
+    boothNext.hidden = true;
+    boothPagination.hidden = true;
+    boothCount.hidden = true;
+  }
+  if(boothCards.length){
+    showBooth(0);
+    syncBoothArrowPosition();
+    if('ResizeObserver' in window){
+      var boothResizeObserver = new ResizeObserver(syncBoothHeight);
+      var boothArrowResizeObserver = new ResizeObserver(syncBoothArrowPosition);
+      boothCards.forEach(function(card){ boothResizeObserver.observe(card); });
+      boothArrowResizeObserver.observe(boothCards[0]);
+    }else{
+      window.addEventListener('load', syncBoothHeight);
+      window.addEventListener('resize', syncBoothHeight);
+      window.addEventListener('load', syncBoothArrowPosition);
+      window.addEventListener('resize', syncBoothArrowPosition);
+    }
+  }else{
+    boothCarousel.hidden = true;
+  }
   var casterList = document.getElementById('casterList');
   var casterTemplate = document.getElementById('casterTemplate');
   streamChannels.forEach(function(channel){
