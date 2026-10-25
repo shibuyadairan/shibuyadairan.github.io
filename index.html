@@ -792,24 +792,32 @@ html{scroll-behavior:smooth}
       var referenceCard = boothCards[1];
       var referenceFrame = referenceCard && referenceCard.querySelector('iframe');
       if(!boothAreaHeight && referenceFrame && referenceFrame.offsetHeight > 100){
-        boothAreaHeight = referenceCard.offsetHeight;
+        var activeCard = boothCards[boothIndex];
+        var activeBorderHeight = parseFloat(getComputedStyle(activeCard).borderTopWidth) +
+          parseFloat(getComputedStyle(activeCard).borderBottomWidth);
+        boothAreaHeight = referenceFrame.offsetHeight + activeBorderHeight;
       }
       if(!boothAreaHeight) return;
 
-      boothCards.forEach(function(card, cardIndex){
-        card.style.height = boothAreaHeight + 'px';
+      boothCards.forEach(function(card){
+        var widget = card.querySelector('.twitter-tweet-rendered');
+        var naturalHeight = widget
+          ? widget.offsetHeight + parseFloat(getComputedStyle(card).borderTopWidth) + parseFloat(getComputedStyle(card).borderBottomWidth)
+          : boothAreaHeight;
+        var cardHeight = Math.min(naturalHeight, boothAreaHeight);
+        card.style.height = cardHeight + 'px';
         card.style.maxHeight = boothAreaHeight + 'px';
-        card.classList.toggle('is-truncated', card.scrollHeight > card.clientHeight);
+        card.classList.toggle('is-truncated', naturalHeight > boothAreaHeight);
       });
       boothList.style.height = boothAreaHeight + 'px';
+      syncBoothArrowPosition();
     }
   }
 
   function syncBoothArrowPosition(){
-    if(boothCards.length){
+    if(boothCards.length && boothAreaHeight){
       var carouselControlsHeight = boothCarousel.offsetHeight - boothList.offsetHeight;
-      var initialCardCenter = boothCards[0].offsetHeight / 2;
-      boothCarousel.style.setProperty('--booth-arrow-top', (initialCardCenter + carouselControlsHeight / 2) + 'px');
+      boothCarousel.style.setProperty('--booth-arrow-top', (boothAreaHeight / 2 + carouselControlsHeight / 2) + 'px');
     }
   }
 
@@ -839,6 +847,11 @@ html{scroll-behavior:smooth}
   if(boothCards.length){
     showBooth(0);
     syncBoothArrowPosition();
+    var boothContentObserver = new MutationObserver(syncBoothHeight);
+    boothCards.forEach(function(card){
+      boothContentObserver.observe(card, {childList:true,subtree:true});
+    });
+    window.addEventListener('resize', syncBoothHeight);
     if('ResizeObserver' in window){
       var boothResizeObserver = new ResizeObserver(syncBoothHeight);
       var boothArrowResizeObserver = new ResizeObserver(syncBoothArrowPosition);
@@ -846,7 +859,6 @@ html{scroll-behavior:smooth}
       boothArrowResizeObserver.observe(boothCards[0]);
     }else{
       window.addEventListener('load', syncBoothHeight);
-      window.addEventListener('resize', syncBoothHeight);
       window.addEventListener('load', syncBoothArrowPosition);
       window.addEventListener('resize', syncBoothArrowPosition);
     }
