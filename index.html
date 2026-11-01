@@ -415,6 +415,16 @@ html{scroll-behavior:smooth}
 
 /* ---------- 大会スタッフ ---------- */
 .avatar{display:block;width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--accent);background:var(--panel)}
+.staff{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.staff .staff-lead{grid-column:1/-1}
+.staff a,.staff-card{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;padding:10px 14px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.staff .avatar{width:52px;height:52px}
+.staff b{display:block;font-size:15px;line-height:1.35;color:var(--ink)}
+.staff small{display:block;font-size:12px;color:var(--muted)}
+.staff small+small{font-family:var(--f-label);font-size:11.5px;letter-spacing:.02em}
+.staff a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (min-width:720px){.staff{grid-template-columns:repeat(2,1fr)}}
+@media (min-width:960px){.staff a:hover{border-color:var(--accent)}.staff a:hover b{text-decoration:underline}}
 
 /* ---------- 大会関連（アイコンなし） ---------- */
 #related .rows a{grid-template-columns:1fr 10px}
@@ -598,13 +608,13 @@ html{scroll-behavior:smooth}
   <section class="blk" aria-labelledby="h-staff">
     <div class="blk-h"><h2 id="h-staff">大会スタッフ</h2></div>
     <p class="lead">本大会はコミュニティ有志によるボランティアスタッフの協力で運営されています。</p>
-    <div class="duo">
-      <img class="avatar" src="image/home/staff-avatar.png" width="240" height="240" alt="マイクを持って話す大会スタッフのtaguyan/たぐやん" loading="lazy" decoding="async">
-      <div>
-        <h3>taguyan/たぐやん</h3>
-        <p>Tournament organizer</p>
-      </div>
-    </div>
+    <ul class="staff">
+      <li class="staff-lead"><div class="staff-card"><img class="avatar" src="image/home/staff-avatar.png" width="240" height="240" alt="" loading="lazy" decoding="async"><span><b>taguyan/たぐやん</b><small>Tournament organizer</small></span></div></li>
+      <li><a href="https://x.com/sanyukkuri115" target="_blank" rel="noopener"><img class="avatar" src="image/home/staff_sanyukkuri115.jpg" width="400" height="400" alt="" loading="lazy" decoding="async"><span><b>ゆっくりの人@くりまう</b><small>ブース・サブイベ企画</small><small>@sanyukkuri115</small></span></a></li>
+      <li><a href="https://x.com/motsudagw" target="_blank" rel="noopener"><img class="avatar" src="image/home/staff_motsudagw.jpg" width="333" height="333" alt="" loading="lazy" decoding="async"><span><b>もつだ</b><small>競技運営</small><small>@motsudagw</small></span></a></li>
+      <li><a href="https://x.com/fun2smash" target="_blank" rel="noopener"><img class="avatar" src="image/home/staff_fun2smash.png" width="400" height="400" alt="" loading="lazy" decoding="async"><span><b>fun2smash</b><small>デザイン</small><small>@fun2smash</small></span></a></li>
+      <li><a href="https://x.com/mnhnnmhmnh" target="_blank" rel="noopener"><img class="avatar" src="image/home/staff_mnhnnmhmnh.jpg" width="400" height="400" alt="" loading="lazy" decoding="async"><span><b>きょっきょー</b><small>会場レイアウト</small><small>@mnhnnmhmnh</small></span></a></li>
+    </ul>
   </section>
 
   <!-- 大会SNSアカウント -->
